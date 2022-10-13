@@ -13,4 +13,6 @@ datos
 datos <- fromJSON(content(datos, type = "text"))
 datos <- datos[["states"]]
 
-# comentarios varios
+# scrapeando de la web
+
+
