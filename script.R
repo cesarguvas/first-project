@@ -4,20 +4,23 @@ library(rvest)
 library(httr)
 library(jsonlite)
 
-# guardamos la url en una variable
+# guardamos la consulta a la api en 'url' y luego extaemos con GET 
 
 url <- "https://opensky-network.org/api/states/all"
 datos <- GET(url)
 datos
+
+
+# extraemos el contenido
 
 datos <- fromJSON(content(datos, type = "text"))
 datos <- datos[["states"]]
 
 # extraemos las tablas de la pagina donde se encuentra la informacion
 
-url <- read_html("https://openskynetwork.github.io/opensky-api/rest.html")
+url2 <- read_html("https://openskynetwork.github.io/opensky-api/rest.html")
 
-tablas <- url %>% html_table()
+tablas <- url2 %>% html_table()
 
 # en la tabla 5 esta la propiedad de los estados de nuestro dataframe 'datos'
 
