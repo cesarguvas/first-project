@@ -1,5 +1,3 @@
-install.packages("httr")
-install.packages("jsonlite")
 library(rvest)
 library(httr)
 library(jsonlite)
