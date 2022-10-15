@@ -3,6 +3,7 @@ install.packages("jsonlite")
 library(rvest)
 library(httr)
 library(jsonlite)
+library(tidyr)
 
 # guardamos la consulta api en 'url', luego extraemos la informacion de la
 # consulta con GET y lo asignamos a 'datos'
@@ -47,7 +48,30 @@ coltablas <- tablas[[5]]
 
 coltablas <- coltablas[-18, ]
 
-# asignamos los nombres al dataframe datos
+# la columna Property es la que contiene los nombres de las columnas de la tabla
+# datos, por los tanto lo asigno: 
 
 colnames(datos) <- coltablas$Property
 
+# convertimos 'datos' en un dataframe
+
+datos <- as.data.frame(datos, stringsAsFactors = FALSE)
+
+# para visualizarlo en un mapa cargamos el paquete leaflet
+
+install.packages("leaflet")
+library(leaflet)
+
+# convertimos a numero la columna longitude y latityde porque estan con caracter
+
+class(datos$longitude)
+class(datos$latitude)
+
+datos$longitude <- as.numeric(datos$longitude)
+datos$latitude <- as.numeric(datos$latitude)
+
+# creamos nuestra visualizacion
+
+leaflet() %>% 
+  addTiles() %>% 
+  addCircles(lng=datos$longitude, lat=datos$latitude, color = "#e63946", opacity = 0.2)
