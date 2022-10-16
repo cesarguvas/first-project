@@ -1,20 +1,19 @@
 library(rvest)
 library(httr)
 library(jsonlite)
-library(tidyr)
+library(tidyverse)
 
-# guardamos la consulta api en 'url', luego extraemos la informacion de la
-# consulta con GET y lo asignamos a 'datos'
+# hago una solicitud de tipo get a la api y lo asigno a la variable 'datos'
+# para esto utilizo la funcion GET de la libreria httr
 
-url <- "https://opensky-network.org/api/states/all"
-datos <- GET(url)
+datos <- GET("https://opensky-network.org/api/states/all")
 datos
 
-# la respuesta es un formato json, utilizo la funcion content para extraer como 
-# texto ya que la respuesta es una respuesta de servidor, y la funcion fromJSON 
-# para convertirlo en un objeto de R 
+# la respuesta del servidor almacenada en la variable 'datos' esta en formato
+# raw, utilizo la funcion rawToChart para convertir el contenido en vector de 
+# caracteres y luego convertirlo en una lista usando fromJSON
 
-datos <- fromJSON(content(datos, type = "text"))
+datos <- fromJSON(rawToChar(datos$content))
 
 # ahora tenemos una lista de 2 elementos, la que nos interesa es 'states'
 
@@ -26,13 +25,13 @@ datos <- datos[["states"]]
 
 # O podemos extraer las tablas de la pagina donde se encuentra la informacion y 
 # asignarlo haciendo web scraping basico, para esto guardamos el documento html
-# en la variable 'url2'
+# en la variable 'url'
 
-url2 <- read_html("https://openskynetwork.github.io/opensky-api/rest.html")
+url <- read_html("https://openskynetwork.github.io/opensky-api/rest.html")
 
-# luego extraemos las tablas de la variable 'url2' y lo asignamos a la variable 'tablas'
+# luego extraemos las tablas de la variable 'url' y lo asignamos a la variable 'tablas'
 
-tablas <- url2 %>% html_table()
+tablas <- url %>% html_table()
 
 # en la tabla 5 esta la referencia a los nombres de a las columnas de nuestra 
 # tabla 'datos'
@@ -47,7 +46,7 @@ coltablas <- tablas[[5]]
 coltablas <- coltablas[-18, ]
 
 # la columna Property es la que contiene los nombres de las columnas de la tabla
-# datos, por los tanto lo asigno: 
+# 'datos', por lo tanto lo asigno: 
 
 colnames(datos) <- coltablas$Property
 
@@ -60,7 +59,7 @@ datos <- as.data.frame(datos, stringsAsFactors = FALSE)
 install.packages("leaflet")
 library(leaflet)
 
-# convertimos a numero la columna longitude y latityde porque estan con caracter
+# convertimos a numero la columna longitude y latitude ya que estan como character
 
 class(datos$longitude)
 class(datos$latitude)
